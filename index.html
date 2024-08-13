@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonc - File - Post</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .title {
+            font-weight: bold;
+            font-size: 30px;
+            text-align: center;
+        }
+
+        .uploadArea {
+            margin-top: 2%;
+            width: 60%;
+            height: 50%;
+            border-radius: 8px;
+            border: 2px dashed #ccc;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .uploadArea:hover {
+            border: 2px dashed #bbb;
+        }
+
+        .uploadIcon {
+            width: 120px;
+            transition: all 0.3s;
+            color: #ccc;
+        }
+
+        .uploadArea:hover .uploadIcon {
+            color: #bbb;
+        }
+
+        .uploadedImage {
+            display: none;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .fileInput {
+            display: none;
+        }
+
+        .copyArea {
+            display: none;
+            align-items: center;
+            background-color: rgba(187, 187, 187, 0.1);
+            width: 60%;
+            margin-top: 8px;
+            padding: 4px 8px;
+            box-sizing: border-box;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .textInput {
+            flex: 1;
+            font-size: 16px;
+            color: #aaa;
+        }
+
+        .copyIcon {
+            height: 20px;
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">Moonc File Post For Node.js</div>
+    <div class="uploadArea">
+        <svg class="uploadIcon" viewBox="0 0 1264 1024">
+            <path
+                d="M992.171444 312.62966C975.189616 137.155482 827.415189 0 647.529412 0 469.849434 0 323.616239 133.860922 303.679205 306.210218 131.598564 333.839271 0 482.688318 0 662.588235c0 199.596576 161.815189 361.411765 361.411765 361.411765h184.014581V692.705882H294.530793l337.939795-361.411764 337.939796 361.411764H726.132229v331.294118H933.647059v-1.555371c185.470975-15.299199 331.294118-170.426291 331.294117-359.856394 0-168.969898-116.101408-310.367302-272.769732-349.958575z"
+                fill="currentColor"></path>
+        </svg>
+        <img class="uploadedImage">
+    </div>
+    <div class="copyArea">
+        <div class="textInput"></div>
+        <svg class="copyIcon" viewBox="0 0 1024 1024">
+            <path
+                d="M763.5456 107.5712H410.0096c-81.2544 0-147.5072 65.536-148.6336 146.5856-79.1552 3.2256-142.5408 68.608-142.5408 148.5312v359.5776c0 81.9712 66.7136 148.6848 148.6848 148.6848h353.536c81.2544 0 147.5072-65.536 148.6336-146.5856 79.1552-3.2256 142.5408-68.608 142.5408-148.5312V256.256c0-81.9712-66.6624-148.6848-148.6848-148.6848z m-55.1936 654.6944c0 48.128-39.168 87.2448-87.2448 87.2448H267.52c-48.128 0-87.2448-39.168-87.2448-87.2448V402.6368c0-48.128 39.168-87.2448 87.2448-87.2448h353.536c48.128 0 87.2448 39.168 87.2448 87.2448v359.6288z m142.4384-146.432c0 46.0288-35.84 83.712-81.0496 86.9376V402.6368c0-81.9712-66.7136-148.6848-148.6848-148.6848H322.8672c1.2288-47.0528 39.7824-84.9408 87.1424-84.9408h353.5872c48.128 0 87.2448 39.168 87.2448 87.2448v359.5776z"
+                fill="currentColor"></path>
+        </svg>
+    </div>
+    <input type="file" class="fileInput">
+
+
+    <script>
+        function dom(selector) {
+            return document.querySelector(selector)
+        }
+
+        function copyText(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text);
+            } else {
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                textarea.style.position = 'fixed';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+            }
+        }
+
+
+        dom('.uploadArea').addEventListener('click', () => {
+            dom('.fileInput').click()
+        })
+
+        dom('.fileInput').addEventListener('change', (e) => {
+            const formData = new FormData();
+            formData.append('file', e.target.files[0])
+
+            fetch('http://127.0.0.1:3002/uploadFile/image', {
+                method: 'POST',
+                body: formData
+            }).then(res => {
+                res.json().then(res => {
+                    if (res.stats === 500) {
+                        alert(res.msg)
+                        return
+                    }
+                    dom('.uploadedImage').src = res.imageUrl
+                    dom('.uploadedImage').style.display = 'block'
+                    dom('.uploadIcon').style.display = 'none'
+
+                    dom('.copyArea').style.display = 'flex'
+                    dom('.textInput').innerText = res.imageUrl
+                })
+            })
+        });
+
+        dom('.copyArea').addEventListener('click', () => {
+            copyText(dom('.textInput').innerText)
+            alert('复制成功')
+        })
+    </script>
+</body>
+
+</html>
