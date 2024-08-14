@@ -30,7 +30,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // 数据库
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://FilePost:123456@127.0.0.1:27017/FilePost?authSource=FilePost').then(
+mongoose.connect('mongodb://MooncFilePost:123456@127.0.0.1:27017/MooncFilePost?authSource=MooncFilePost').then(
     () => {
         console.log('数据库连接成功')
     },
