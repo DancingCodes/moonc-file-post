@@ -30,7 +30,12 @@ if (process.env.NODE_ENV === 'development') {
 
 // 数据库
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://MooncFilePost:123456@127.0.0.1:27017/MooncFilePost?authSource=MooncFilePost').then(
+// db.createUser({
+//     user: "MooncFilePost",
+//     pwd: "DancingCodes1227",
+//     roles: [{ role: "readWrite", db: "MooncFilePost" }]
+// })
+mongoose.connect('mongodb://MooncFilePost:DancingCodes1227@127.0.0.1:27017/MooncFilePost?authSource=MooncFilePost').then(
     () => {
         console.log('数据库连接成功')
     },
